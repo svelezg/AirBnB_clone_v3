@@ -2,7 +2,8 @@
 """
 Contains the API
 """
-from flask import Flask, Blueprint, render_template, abort, jsonify, make_response
+from flask import Flask, Blueprint, render_template, abort,\
+    jsonify, make_response
 from models import storage
 from api.v1.views import app_views
 app = Flask(__name__)

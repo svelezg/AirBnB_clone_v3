@@ -95,6 +95,9 @@ class TestDBStorage_NewMethods_v3(unittest.TestCase):
 
     def test_dbs_get(self):
         """Test for the method to retrieve one object"""
+        new_state = State(name="California")
+        models.storage.new(new_state)
+        new_state.save()
         first_state_id = list(models.storage.all("State").values())[0].id
         # print(models.storage.get("State", first_state_id).__class__.__name__)
         self.assertEqual(models.storage.get(
