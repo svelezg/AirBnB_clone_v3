@@ -91,8 +91,7 @@ class TestFileStorage(unittest.TestCase):
 
 
 class TestDBStorage_NewMethods_v3(unittest.TestCase):
-    """Tests to methods added in V3"""
-
+    """Tests for methods added in V3 db_storage"""
     def test_dbs_get(self):
         """Test for the method to retrieve one object"""
         new_state = State(name="California")

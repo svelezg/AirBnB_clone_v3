@@ -77,11 +77,7 @@ class DBStorage:
 
     def get(self, cls, id):
         """
-        A method to retrieve one object:
-        :param cls:
-        :param id:
-        :return: the object based on the class name and its ID,
-        or None if not found
+        A method to retrieve one object
         """
         objs = self.all(cls)
         key = cls + '.' + id
@@ -89,10 +85,6 @@ class DBStorage:
 
     def count(self, cls=None):
         """
-        A method to count the number of objects in storage:
-        :param cls:
-        :return: the number of objects in storage matching the
-        given class name.
-        If no name is passed, returns the count of all objects in storage.
+        A method to count the number of objects in storage
         """
         return len(self.all(cls))
