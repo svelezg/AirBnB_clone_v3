@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 """
-initialize tBlueprint views
+initialize Blueprint views
 """
 from flask import Blueprint
 
