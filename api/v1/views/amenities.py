@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 """
-Index page
+Amenities view
 """
 from api.v1.views import app_views
 from flask import Flask, Blueprint, jsonify, abort, make_response, request

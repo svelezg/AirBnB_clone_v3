@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 """
-Index page
+City View
 """
 from api.v1.views import app_views
 from flask import Flask, Blueprint, jsonify, abort, make_response, request
@@ -60,11 +60,11 @@ def create_city(state_id):
     my_state = storage.get('State', state_id)
     if my_state is None:
         abort(404)
-    if not request.get_json(silent=True):
+    if not request.json:
         abort(400, 'Not a JSON')
-    if 'name' not in request.get_json(silent=True):
+    if 'name' not in request.json:
         abort(400, 'Missing name')
-    my_city = city.City(name=request.get_json('name', ""), state_id=state_id)
+    my_city = city.City(name=request.json.get('name', ""), state_id=state_id)
     storage.new(my_city)
     my_city.save()
     return make_response(jsonify(my_city.to_dict()), 201)
@@ -77,11 +77,12 @@ def update_city(city_id):
     my_city = storage.get('City', city_id)
     if my_city is None:
         abort(404)
-    if not request.get_json(silent=True):
+    if not request.json:
+        # return make_response(jsonify({'error': 'Not a JSON'}), 400)
         abort(400, 'Not a JSON')
-    for key, value in request.get_json(silent=True).items():
-        if key not in ['id', 'state_id', 'created_at', 'updated_at']:
-            setattr(my_city, key, value)
+    for req in request.json:
+        if req not in ['id', 'created_at', 'updated_at']:
+            setattr(my_city, req, request.json[req])
     my_city.save()
     return jsonify(my_city.to_dict())
 

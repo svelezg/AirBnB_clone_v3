@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 """
-Index page
+Places view
 """
 from api.v1.views import app_views
 from flask import Flask, Blueprint, jsonify, abort, make_response, request
@@ -30,6 +30,7 @@ def places_city_id(city_id):
         places.append(my_place.to_dict())
     return jsonify(places)
 
+
 @app_views.route('/places/<string:place_id>', methods=['GET'],
                  strict_slashes=False)
 def place_id(place_id):
@@ -38,6 +39,7 @@ def place_id(place_id):
     if my_place is None:
         abort(404)
     return jsonify(my_place.to_dict())
+
 
 @app_views.route('/places/<string:place_id>', methods=['DELETE'],
                  strict_slashes=False)
@@ -49,6 +51,7 @@ def place_id_delete(place_id):
     my_place.delete()
     storage.save()
     return jsonify({})
+
 
 @app_views.route('cities/<city_id>/places', methods=['POST'],
                  strict_slashes=False)
@@ -72,6 +75,7 @@ def create_place(city_id):
     storage.new(my_place)
     my_place.save()
     return make_response(jsonify(my_place.to_dict()), 201)
+
 
 @app_views.route('/places/<string:place_id>', methods=['PUT'],
                  strict_slashes=False)

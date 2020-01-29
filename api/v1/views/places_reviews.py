@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 """
-Index page
+Places Review view
 """
 from api.v1.views import app_views
 from flask import Flask, Blueprint, jsonify, abort, make_response, request
@@ -30,6 +30,7 @@ def reviews_place_id(place_id):
         reviews.append(my_review.to_dict())
     return jsonify(reviews)
 
+
 @app_views.route('/reviews/<string:review_id>', methods=['GET'],
                  strict_slashes=False)
 def review_id(review_id):
@@ -38,6 +39,7 @@ def review_id(review_id):
     if my_review is None:
         abort(404)
     return jsonify(my_review.to_dict())
+
 
 @app_views.route('/reviews/<string:review_id>', methods=['DELETE'],
                  strict_slashes=False)
@@ -49,6 +51,7 @@ def review_id_delete(review_id):
     my_review.delete()
     storage.save()
     return jsonify({})
+
 
 @app_views.route('places/<place_id>/reviews', methods=['POST'],
                  strict_slashes=False)
@@ -73,6 +76,7 @@ def create_review(place_id):
     my_review.save()
     return make_response(jsonify(my_review.to_dict()), 201)
 
+
 @app_views.route('/reviews/<string:review_id>', methods=['PUT'],
                  strict_slashes=False)
 def update_review(review_id):
@@ -84,7 +88,8 @@ def update_review(review_id):
         # return make_response(jsonify({'error': 'Not a JSON'}), 400)
         abort(400, 'Not a JSON')
     for req in request.get_json(silent=True):
-        if req not in ['id', 'user_id', 'place_id', 'created_at', 'updated_at']:
+        if req not in ['id', 'user_id', 'place_id',
+                       'created_at', 'updated_at']:
             setattr(my_review, req, request.json[req])
     my_review.save()
     return jsonify(my_review.to_dict())
