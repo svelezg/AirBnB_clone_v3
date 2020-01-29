@@ -1,10 +1,10 @@
 # AirBnB Clone - 
 
-##How to install
+## How to install
 Clone the repository below
 https://github.com/svelezg/AirBnB_clone_v3.git
 
-##The Console
+## The Console
 The console is the first segment of the AirBnB project at Holberton School that will collectively cover fundamental concepts of higher level programming. The goal of AirBnB project is to eventually deploy our server a simple copy of the AirBnB Website(HBnB). A command interpreter is created in this segment to manage objects for the AirBnB(HBnB) website.
 The console for the AirBnB clone is mean to be a command interpreter to manage the AirBnB objects.
 

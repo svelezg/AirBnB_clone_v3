@@ -1,0 +1,10 @@
+Santiago Vélez G.
+
+# General
+There were small typos in the README file
+# db_storage and file_storage
+The description of the added methods could be improved
+For db_storage and file_storage generally well written and understandable code
+# Test files
+The skip decorator for both db_storage and file_storage need to be added
+ Good to have test with additional objects other than state
