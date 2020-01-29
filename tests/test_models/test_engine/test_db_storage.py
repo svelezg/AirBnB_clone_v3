@@ -92,13 +92,15 @@ class TestFileStorage(unittest.TestCase):
 
 class TestDBStorage_NewMethods_v3(unittest.TestCase):
     """Tests for methods added in V3 db_storage"""
+
+    @unittest.skipIf(os.getenv('HBNB_TYPE_STORAGE') != 'db',
+                     "not testing db storage")
     def test_dbs_get(self):
         """Test for the method to retrieve one object"""
         new_state = State(name="California")
         models.storage.new(new_state)
         new_state.save()
         first_state_id = list(models.storage.all("State").values())[0].id
-        # print(models.storage.get("State", first_state_id).__class__.__name__)
         self.assertEqual(models.storage.get(
             "State", first_state_id).__class__.__name__, 'State')
         temp_stdout1 = StringIO()
@@ -107,7 +109,17 @@ class TestDBStorage_NewMethods_v3(unittest.TestCase):
                                                               first_state_id)))
         output = temp_stdout1.getvalue().strip()
         self.assertIn(first_state_id, output)
+        new_state = State(name="Michigan")
+        new_state.save()
+        new_user = User(email="amanda@gmail.com", password="my_pass")
+        new_user.save()
+        self.assertIs(new_state, models.storage.get("State", new_state.id))
+        self.assertIs(None, models.storage.get("State", "blabla"))
+        self.assertIs(None, models.storage.get("dummy_object", "blabla"))
+        self.assertIs(new_user, models.storage.get("User", new_user.id))
 
+    @unittest.skipIf(os.getenv('HBNB_TYPE_STORAGE') != 'db',
+                     "not testing db storage")
     def test_dbs_count(self):
         """Test for the method to count the number of objects in storage"""
         self.assertIs(type(models.storage.count()), int)
@@ -120,5 +132,14 @@ class TestDBStorage_NewMethods_v3(unittest.TestCase):
         with contextlib.redirect_stdout(temp_stdout2):
             print(models.storage.count("State"))
         output2 = temp_stdout2.getvalue().strip()
-        # print("output1: {} output2: {}".format(output1, output2))
         self.assertTrue(output1 >= output2)
+        initial_count = models.storage.count()
+        initial_state_count = models.storage.count('State')
+        self.assertEqual(models.storage.count("dummy_object"), 0)
+        new_state = State(name="Nebraska")
+        new_state.save()
+        new_user = User(email="luke@gmail.com", password="my_pass")
+        new_user.save()
+        self.assertEqual(models.storage.count("State"),
+                         initial_state_count + 1)
+        self.assertEqual(models.storage.count(), initial_count + 2)

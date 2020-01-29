@@ -119,9 +119,12 @@ class TestFileStorage(unittest.TestCase):
 
 class TestDBStorage_NewMethods_v3(unittest.TestCase):
     """Tests to methods added in V3 file_storage"""
+
+    @unittest.skipIf(os.getenv('HBNB_TYPE_STORAGE') == 'db',
+                     "not testing file storage")
     def test_dbs_get(self):
         """Test for the method to retrieve one object"""
-        new_state = State(name="California")
+        new_state = State(name="Florida")
         models.storage.new(new_state)
         new_state.save()
         first_state_id = list(models.storage.all("State").values())[0].id
@@ -135,6 +138,8 @@ class TestDBStorage_NewMethods_v3(unittest.TestCase):
         output = temp_stdout1.getvalue().strip()
         self.assertIn(first_state_id, output)
 
+    @unittest.skipIf(os.getenv('HBNB_TYPE_STORAGE') == 'db',
+                     "not testing file storage")
     def test_dbs_count(self):
         """Test for the method to count the number of objects in storage"""
         self.assertIs(type(models.storage.count()), int)
@@ -149,3 +154,12 @@ class TestDBStorage_NewMethods_v3(unittest.TestCase):
         output2 = temp_stdout2.getvalue().strip()
         # print("output1: {} output2: {}".format(output1, output2))
         self.assertTrue(output1 >= output2)
+        storage = FileStorage()
+        initial_length = len(storage.all())
+        self.assertEqual(storage.count(), initial_length)
+        state_len = len(storage.all("State"))
+        self.assertEqual(storage.count("State"), state_len)
+        new_state = State()
+        new_state.save()
+        self.assertEqual(storage.count(), initial_length + 1)
+        self.assertEqual(storage.count("State"), state_len + 1)
