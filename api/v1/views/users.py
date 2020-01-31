@@ -44,14 +44,14 @@ def user_id_delete(user_id):
                  strict_slashes=False)
 def create_user():
     """Creates a User object"""
-    if not request.get_json:
+    if not request.json:
         abort(400, 'Not a JSON')
-    if 'email' not in request.get_json:
+    if 'email' not in request.json:
         abort(400, 'Missing email')
-    if 'password' not in request.get_json:
+    if 'password' not in request.json:
         abort(400, 'Missing password')
-    my_user = user.User(email=request.get_json('email', ""),
-                        password=request.get_json('password', ""))
+    my_user = user.User(email=request.json.get('email', ""),
+                        password=request.json.get('password', ""))
     storage.new(my_user)
     my_user.save()
     return make_response(jsonify(my_user.to_dict()), 201)
