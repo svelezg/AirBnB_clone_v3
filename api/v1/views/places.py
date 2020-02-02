@@ -80,14 +80,15 @@ def create_place(city_id):
 @app_views.route('/places_search', methods=['POST'],
                  strict_slashes=False)
 def search_place():
-    """Searches a Place object"""
+    """places route to handle http method for request to search places"""
     states = []
     cities = []
     places = []
     places_result = []
     if not request.json:
         abort(400, 'Not a JSON')
-    if 'states' in request.json:
+    states_ids = request.json.get('states', "")
+    if states_ids and len(states_ids) > 0:
         for the_id in request.json.get('states', ""):
             my_state = storage.get('State', the_id)
             if my_state is None:
@@ -97,7 +98,8 @@ def search_place():
                 cities.append(my_city.to_dict())
                 for my_place in my_city.places:
                     places.append(my_place)
-    if 'cities' in request.json:
+    cities_ids = request.json.get('cities', "")
+    if cities_ids and len(cities_ids) > 0:
         for the_id in request.json.get('cities', ""):
             my_city = storage.get('City', the_id)
             if my_city is None:
@@ -105,12 +107,13 @@ def search_place():
             cities.append(my_city.to_dict())
             for my_place in my_city.places:
                 places.append(my_place)
-    if 'states' not in request.json and 'cities' not in request.json:
+    if (not states_ids and not cities_ids) or (len(states_ids) == 0 and len(cities_ids) == 0):
         # print("No States and Cities")
         those_places = storage.all('Place').values()
         for my_places in those_places:
             places.append(my_places)
-    if 'amenities' in request.json:
+    amenities_ids = request.json.get('amenities', "")
+    if amenities_ids and len(amenities_ids) > 0:
         # print("amenities is in")
         for my_place in places:
             the_place = storage.get('Place', my_place.id)
