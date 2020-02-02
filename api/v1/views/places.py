@@ -77,6 +77,56 @@ def create_place(city_id):
     return make_response(jsonify(my_place.to_dict()), 201)
 
 
+@app_views.route('/places_search', methods=['POST'],
+                 strict_slashes=False)
+def search_place():
+    """Searches a Place object"""
+    states = []
+    cities = []
+    places = []
+    places_result = []
+    if not request.json:
+        abort(400, 'Not a JSON')
+    if 'states' in request.json:
+        for the_id in request.json.get('states', ""):
+            my_state = storage.get('State', the_id)
+            if my_state is None:
+                abort(404)
+            states.append(my_state.to_dict())
+            for my_city in my_state.cities:
+                cities.append(my_city.to_dict())
+                for my_place in my_city.places:
+                    places.append(my_place)
+    if 'cities' in request.json:
+        for the_id in request.json.get('cities', ""):
+            my_city = storage.get('City', the_id)
+            if my_city is None:
+                abort(404)
+            cities.append(my_city.to_dict())
+            for my_place in my_city.places:
+                places.append(my_place)
+    if 'states' not in request.json and 'cities' not in request.json:
+        print("No States and Cities")
+        those_places = storage.all('Place').values()
+        for my_places in those_places:
+            places.append(my_places)
+    if 'amenities' in request.json:
+        print("amenities is in")
+        for my_place in places:
+            the_place = storage.get('Place', my_place.id)
+            print("****{} {}***".format(my_place.id, my_place.name))
+            for it in the_place.amenities:
+                print("{} {}".format(it.id, storage.get('Amenity', it.id).name))
+            for the_id in request.json.get('amenities', ""):
+                if the_id not in the_place.amenities:
+                    print("The place {} Does not have {} amenity".format(the_place.id, the_id))
+                    places.remove(my_place)
+                    break
+    for my_place in places:
+        places_result.append(my_place.to_dict())
+    return jsonify(places_result)
+
+
 @app_views.route('/places/<string:place_id>', methods=['PUT'],
                  strict_slashes=False)
 def update_place(place_id):
