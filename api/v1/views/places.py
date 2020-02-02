@@ -140,8 +140,12 @@ def search_place():
                     places.remove(my_place)
                     break
     # print("After amenities {}".format(len(places)))
+    n = 0
     for my_place in places:
-        places_result.append(my_place.to_dict())
+        n = n + 1
+        if my_place not in places[n:]:
+            places_result.append(my_place.to_dict())
+    # print("Without repeats {}".format(len(places_result)))
     return jsonify(places_result)
 
 
