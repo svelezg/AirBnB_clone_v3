@@ -83,10 +83,17 @@ def search_place():
     """places route to handle http method for request to search places"""
     states = []
     cities = []
-    places = []
     places_result = []
     if not request.json:
         abort(400, 'Not a JSON')
+
+    parms = request.get_json()
+    vals = [len(item) for item in parms.values()]
+    if ((len(parms) is 0) or (max(vals) is 0)):
+        places = storage.all("Place").values()
+        return jsonify([item.to_dict() for item in places])
+    places = []
+
     states_ids = request.json.get('states', "")
     if states_ids and len(states_ids) > 0:
         for the_id in request.json.get('states', ""):
@@ -98,6 +105,8 @@ def search_place():
                 cities.append(my_city.to_dict())
                 for my_place in my_city.places:
                     places.append(my_place)
+    # print("After states {}".format(len(places)))
+
     cities_ids = request.json.get('cities', "")
     if cities_ids and len(cities_ids) > 0:
         for the_id in request.json.get('cities', ""):
@@ -107,26 +116,37 @@ def search_place():
             cities.append(my_city.to_dict())
             for my_place in my_city.places:
                 places.append(my_place)
-    if (not states_ids and not cities_ids) or (len(states_ids) == 0 and len(cities_ids) == 0):
+    # print("After cities {}".format(len(places)))
+
+    all_places = []
+    if len(places) == 0:
         # print("No States and Cities")
         those_places = storage.all('Place').values()
         for my_places in those_places:
-            places.append(my_places)
+            all_places.append(my_places)
+
+    new_places = []
     amenities_ids = request.json.get('amenities', "")
     if amenities_ids and len(amenities_ids) > 0:
         # print("amenities is in")
-        for my_place in places:
-            the_place = storage.get('Place', my_place.id)
+        for my_place in all_places:
             """
             print("****{} {}***".format(my_place.id, my_place.name))
             for it in the_place.amenities:
                 print("{} {}".format(it.id, storage.get('Amenity', it.id).name))
             """
+
             for the_id in request.json.get('amenities', ""):
-                if the_id not in the_place.amenities:
+                if the_id not in my_place.amenities:
                     # print("The place {} Does not have {} amenity".format(the_place.id, the_id))
-                    places.remove(my_place)
+                    # places.remove(my_place)
+                    flag = False
                     break
+                else:
+                    flag = True
+            if flag:
+                places.append(my_place)
+    # print("After amenities {}".format(len(places)))
     for my_place in places:
         places_result.append(my_place.to_dict())
     return jsonify(places_result)
