@@ -81,19 +81,19 @@ def create_place(city_id):
                  strict_slashes=False)
 def search_place():
     """places route to handle http method for request to search places"""
-    states = []
-    cities = []
-    places_result = []
     if not request.json:
         abort(400, 'Not a JSON')
 
-    parms = request.get_json()
-    vals = [len(item) for item in parms.values()]
-    if ((len(parms) is 0) or (max(vals) is 0)):
+    parameters = request.get_json()
+    vals = [len(item) for item in parameters.values()]
+    if (len(parameters) is 0) or (max(vals) is 0):
         places = storage.all("Place").values()
         return jsonify([item.to_dict() for item in places])
     places = []
+    places_result = []
 
+    states = []
+    cities = []
     states_ids = request.json.get('states', "")
     if states_ids and len(states_ids) > 0:
         for the_id in request.json.get('states', ""):
@@ -123,29 +123,22 @@ def search_place():
         # print("No States and Cities")
         those_places = storage.all('Place').values()
         for my_places in those_places:
-            all_places.append(my_places)
+            places.append(my_places)
 
-    new_places = []
     amenities_ids = request.json.get('amenities', "")
     if amenities_ids and len(amenities_ids) > 0:
         # print("amenities is in")
-        for my_place in all_places:
+        for my_place in places:
             """
             print("****{} {}***".format(my_place.id, my_place.name))
             for it in the_place.amenities:
                 print("{} {}".format(it.id, storage.get('Amenity', it.id).name))
             """
-
             for the_id in request.json.get('amenities', ""):
                 if the_id not in my_place.amenities:
                     # print("The place {} Does not have {} amenity".format(the_place.id, the_id))
-                    # places.remove(my_place)
-                    flag = False
+                    places.remove(my_place)
                     break
-                else:
-                    flag = True
-            if flag:
-                places.append(my_place)
     # print("After amenities {}".format(len(places)))
     for my_place in places:
         places_result.append(my_place.to_dict())
