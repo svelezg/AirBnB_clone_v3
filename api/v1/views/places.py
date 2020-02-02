@@ -106,20 +106,20 @@ def search_place():
             for my_place in my_city.places:
                 places.append(my_place)
     if 'states' not in request.json and 'cities' not in request.json:
-        print("No States and Cities")
+        #print("No States and Cities")
         those_places = storage.all('Place').values()
         for my_places in those_places:
             places.append(my_places)
     if 'amenities' in request.json:
-        print("amenities is in")
+        #print("amenities is in")
         for my_place in places:
             the_place = storage.get('Place', my_place.id)
-            print("****{} {}***".format(my_place.id, my_place.name))
+            #print("****{} {}***".format(my_place.id, my_place.name))
             for it in the_place.amenities:
-                print("{} {}".format(it.id, storage.get('Amenity', it.id).name))
+                #print("{} {}".format(it.id, storage.get('Amenity', it.id).name))
             for the_id in request.json.get('amenities', ""):
                 if the_id not in the_place.amenities:
-                    print("The place {} Does not have {} amenity".format(the_place.id, the_id))
+                    #print("The place {} Does not have {} amenity".format(the_place.id, the_id))
                     places.remove(my_place)
                     break
     for my_place in places:
