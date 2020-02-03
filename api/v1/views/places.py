@@ -83,15 +83,22 @@ def search_place():
     """places route to handle http method for request to search places"""
     if not request.json:
         abort(400, 'Not a JSON')
-
-    parameters = request.get_json()
-    vals = [len(item) for item in parameters.values()]
-    if (len(parameters) is 0) or (max(vals) is 0):
+    parameters_list = ('states', 'cities', 'amenities')
+    parameters_read = request.json
+    parameters_lengths = [0]
+    parameters_actual = {}
+    for key, value in parameters_read.items():
+        if key in parameters_list:
+            parameters_actual[key] = value
+            parameters_lengths.append(len(value))
+    print(len(parameters_actual))
+    print(max(parameters_lengths))
+    if (len(parameters_actual) is 0) or (max(parameters_lengths) is 0):
         places = storage.all("Place").values()
         return jsonify([item.to_dict() for item in places])
+
     places = []
     places_result = []
-
     states = []
     cities = []
     states_ids = request.json.get('states', "")
