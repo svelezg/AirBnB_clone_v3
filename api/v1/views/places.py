@@ -91,10 +91,11 @@ def search_place():
         if key in parameters_list:
             parameters_actual[key] = value
             parameters_lengths.append(len(value))
-    print(len(parameters_actual))
-    print(max(parameters_lengths))
+    # print(len(parameters_actual))
+    # print(max(parameters_lengths))
     if (len(parameters_actual) is 0) or (max(parameters_lengths) is 0):
         places = storage.all("Place").values()
+        # print("if empty {}".format(len(places)))
         return jsonify([item.to_dict() for item in places])
 
     places = []
@@ -139,11 +140,13 @@ def search_place():
             """
             print("****{} {}***".format(my_place.id, my_place.name))
             for it in the_place.amenities:
-                print("{} {}".format(it.id, storage.get('Amenity', it.id).name))
+                print("{} {}".format(it.id, storage.get('Amenity', 
+                it.id).name))
             """
             for the_id in request.json.get('amenities', ""):
                 if the_id not in my_place.amenities:
-                    # print("The place {} Does not have {} amenity".format(the_place.id, the_id))
+                    # print("The place {} Does not have {} amenity".
+                    # format(the_place.id, the_id))
                     places.remove(my_place)
                     break
     # print("After amenities {}".format(len(places)))
