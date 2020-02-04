@@ -18,7 +18,8 @@ def places():
     return jsonify(places)
 
 
-@app_views.route('/cities/<string:city_id>/places', methods=['GET'],
+@app_views.route('/cities/<string:city_id>/places',
+                 methods=['GET'],
                  strict_slashes=False)
 def places_city_id(city_id):
     """Retrieves a City object"""
@@ -31,7 +32,8 @@ def places_city_id(city_id):
     return jsonify(places)
 
 
-@app_views.route('/places/<string:place_id>', methods=['GET'],
+@app_views.route('/places/<string:place_id>',
+                 methods=['GET'],
                  strict_slashes=False)
 def place_id(place_id):
     """Retrieves a Place object by id"""
