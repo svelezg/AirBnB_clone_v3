@@ -95,7 +95,7 @@ def search_place():
     places_obj = []
 
     if 'states' in parameters and len(parameters.get('states')) > 0:
-        states_ids = request.json.get('states')
+        states_ids = parameters.get('states')
         states = [storage.get('State', state) for state in states_ids]
         for my_state in states:
             for my_city in my_state.cities:
@@ -113,7 +113,7 @@ def search_place():
                 places_obj.append(my_place)
 
     if 'amenities' in parameters and len(parameters.get('amenities')) > 0:
-        amenities_ids = request.json.get('amenities')
+        amenities_ids = parameters.get('amenities')
         if len(places_obj) == 0:
             places_obj = storage.all('Place').values()
         else:
