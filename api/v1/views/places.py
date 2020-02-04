@@ -41,7 +41,8 @@ def place_id(place_id):
     return jsonify(my_place.to_dict())
 
 
-@app_views.route('/places/<string:place_id>', methods=['DELETE'],
+@app_views.route('/places/<string:place_id>',
+                 methods=['DELETE'],
                  strict_slashes=False)
 def place_id_delete(place_id):
     """Deletes a Place object by id"""
@@ -81,9 +82,8 @@ def create_place(city_id):
                  strict_slashes=False)
 def search_place():
     """places route to handle http method for request to search places"""
-    if not request.json:
-        abort(400, 'Not a JSON')
-
+    if not request.is_json:
+        abort(400, "Not a JSON")
     parameters = request.get_json()
     parameters_list = [len(parameter) for parameter in parameters.values()]
     if (len(parameters) is 0) or (max(parameters_list) is 0):
