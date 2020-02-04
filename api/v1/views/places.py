@@ -83,20 +83,11 @@ def search_place():
     """places route to handle http method for request to search places"""
     if not request.json:
         abort(400, 'Not a JSON')
+
     parameters = request.get_json()
-    parameters_list = ('states', 'cities', 'amenities')
-    parameters_read = request.json
-    parameters_lengths = [0]
-    parameters_actual = {}
-    for key, value in parameters_read.items():
-        if key in parameters_list:
-            parameters_actual[key] = value
-            parameters_lengths.append(len(value))
-    # print(len(parameters_actual))
-    # print(max(parameters_lengths))
-    if (len(parameters_actual) is 0) or (max(parameters_lengths) is 0):
+    parameters_list = [len(parameter) for parameter in parameters.values()]
+    if (len(parameters) is 0) or (max(parameters_list) is 0):
         places = storage.all("Place").values()
-        # print("if empty {}".format(len(places)))
         return jsonify([item.to_dict() for item in places])
 
     places_result = []
@@ -105,9 +96,9 @@ def search_place():
     states = []
     cities = []
 
-    states_ids = request.json.get('states', "")
+    states_ids = request.json.get('states')
     if 'states' in parameters and len(parameters.get('states')) > 0:
-        for the_id in request.json.get('states', ""):
+        for the_id in states_ids:
             my_state = storage.get('State', the_id)
             if my_state is None:
                 abort(404)
@@ -127,9 +118,8 @@ def search_place():
                 places.append(my_place.to_dict())
                 places_obj.append(my_place)
 
-    amenities_ids = request.json.get('amenities', "")
+    amenities_ids = request.json.get('amenities')
     if 'amenities' in parameters and len(parameters.get('amenities')) > 0:
-        amenities = parameters.get('amenities')
 
         if len(places_obj) == 0:
             places_obj = storage.all('Place').values()
@@ -142,7 +132,7 @@ def search_place():
             amenities_auxiliary = my_place.amenities
             for amenity_auxiliary in amenities_auxiliary:
                 available_amenity.append(amenity_auxiliary.id)
-            for amenity in amenities:
+            for amenity in amenities_ids:
                 if amenity in available_amenity:
                     flag = True
                 else:
